@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Aluno {
+  id        Int      @id @default(autoincrement())
+  nome      String   @db.VarChar(60)
+  email     String   @db.VarChar(40)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  turma     Turma
+
+  @@map("alunos")
+}
+
+model AlunoArquivado {
+  id        Int      @id @default(autoincrement())
+  nome      String   @db.VarChar(60)
+  email     String   @db.VarChar(40)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  turma     Turma
+  adminId   Int
+
+  @@map("alunos_arquivados")
+}
+
+enum Turma {
+  BERCARIO
+  MATERNAL1
+  MATERNAL2
+  PRE1
+  PRE2
+  TURNOINVERSO
+}
+
+model Professor {
+  id        Int      @id @default(autoincrement())
+  nome      String   @db.VarChar(60)
+  email     String   @db.VarChar(40)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Turma     Turma
+
+  @@map("professores")
+}
+
+model Admin {
+  id                Int       @id @default(autoincrement())
+  nome              String    @db.VarChar(60)
+  email             String    @db.VarChar(40)
+  senha             String    @db.VarChar(60)
+  createdAt         DateTime  @default(now())
+  resetToken        String?
+  resetTokenExpires DateTime?
+  updatedAt         DateTime  @updatedAt
+  logs              Log[]
+
+  @@map("admins")
+}
+
+model Log {
+  id          Int      @id @default(autoincrement())
+  descricao   String   @db.VarChar(60)
+  complemento String   @db.VarChar(255)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  adminId     Int
+  admin       Admin    @relation(fields: [adminId], references: [id])
+
+  @@map("logs")
+}
